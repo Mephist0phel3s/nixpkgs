@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ stdenv.cc.cc makeWrapper autoPatchelfHook ];
-  buildInputs = [stdenv.cc.cc makeWrapper gtk3 glib makeDesktopItem] ++ (with xorg; [xorg.libX11 xorg.libXrandr]);
+  buildInputs = [stdenv.cc.cc makeWrapper gtk3 glib makeDesktopItem xorg xorg.libX11 xorg.libXrandr];
   sourceRoot = "./${pname}-${version}";
   unpackPhase = false;
   dontConfigure = true;
