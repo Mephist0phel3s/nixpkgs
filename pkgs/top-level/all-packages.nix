@@ -16246,6 +16246,8 @@ with pkgs;
     buildGoModule = buildGo122Module;
   };
 
+  War-Thunder = callPackage ../by-name/wa/War-Thunder/package.nix
+
   # Should always be the version with the most features
   w3m-full = w3m;
 
