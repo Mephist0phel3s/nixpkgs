@@ -28,7 +28,7 @@ let
 
     if [ ! -d "$HOME/.aces64/War-Thunder-086d99e" ]; then
 
-      echo "DEBUG::: Directory not found. Fuck."
+      echo "DEBUG::: Directory not found. ."
 
       mkdir -p "$HOME/.aces64/War-Thunder-086d99e"
       cd "$HOME/.aces64/War-Thunder-086d99e"
@@ -37,7 +37,7 @@ let
       echo "DEBUG::: Setting Enviroment variables for runtime again."
       export ACES64_DIR=$HOME/.aces64/War-Thunder-086d99e/
       else
-        echo "DEBUG::: Directory exits, fucking good.."
+        echo "DEBUG::: Directory exits, ing good.."
     fi
     echo "Installing launcher, bpreport, and selfupdater scripts to the user directory"
 
@@ -63,7 +63,7 @@ let
 
     cd "$ACES64_DIR" || { echo "cd command rejected, breaking"; exit 1; }
     echo "DEBUG::: Changing root directory to $ACES64_DIR"
-    echo "DEBUG::: Where the fuck am i. $PWD"
+    echo "DEBUG::: Where the  am i. $PWD"
 
     exec "$ACES64_DIR/launcher"
     '';}; in
@@ -139,7 +139,7 @@ stdenv.mkDerivation rec {
     echo "DEBUG::: Done, proceeding."
 
     install -m755 -D launcher.ico $out/share/pixmaps/launcher.png
-    echo "DEBUG::: Installing the fucking desktop file"
+    echo "DEBUG::: Installing the ing desktop file"
     mkdir -p "$out/share/applications"
     echo "INFO: Skpipping cp -rf desktopItem"
     echo "INFO: sym linking aces to WarThunder for purposes of desktop execution."
