@@ -5,23 +5,28 @@
   callPackage,
   fetchurl,
   icu73,
+  icu76,
   fetchpatch2,
   config,
 }:
 
 let
-  icu73' = icu73.overrideAttrs (attrs: {
-    # standardize vtzone output
-    # Work around ICU-22132 https://unicode-org.atlassian.net/browse/ICU-22132
-    # https://bugzilla.mozilla.org/show_bug.cgi?id=1790071
-    patches = attrs.patches ++ [
-      (fetchpatch2 {
-        url = "https://hg.mozilla.org/mozilla-central/raw-file/fb8582f80c558000436922fb37572adcd4efeafc/intl/icu-patches/bug-1790071-ICU-22132-standardize-vtzone-output.diff";
-        stripLen = 3;
-        hash = "sha256-MGNnWix+kDNtLuACrrONDNcFxzjlUcLhesxwVZFzPAM=";
-      })
-    ];
-  });
+  patchICU =
+    icu:
+    icu.overrideAttrs (attrs: {
+      # standardize vtzone output
+      # Work around ICU-22132 https://unicode-org.atlassian.net/browse/ICU-22132
+      # https://bugzilla.mozilla.org/show_bug.cgi?id=1790071
+      patches = attrs.patches ++ [
+        (fetchpatch2 {
+          url = "https://hg.mozilla.org/mozilla-central/raw-file/fb8582f80c558000436922fb37572adcd4efeafc/intl/icu-patches/bug-1790071-ICU-22132-standardize-vtzone-output.diff";
+          stripLen = 3;
+          hash = "sha256-MGNnWix+kDNtLuACrrONDNcFxzjlUcLhesxwVZFzPAM=";
+        })
+      ];
+    });
+  icu73' = patchICU icu73;
+  icu76' = patchICU icu76;
 
   common =
     {
@@ -46,6 +51,7 @@ let
 
       extraPassthru = {
         icu73 = icu73';
+        icu76 = icu76';
       };
 
       meta = with lib; {
@@ -73,6 +79,7 @@ let
         pgoSupport = false; # console.warn: feeds: "downloadFeed: network connection unavailable"
 
         icu73 = icu73';
+        icu76 = icu76';
       };
 
 in
@@ -81,8 +88,8 @@ rec {
   thunderbird = thunderbird-esr;
 
   thunderbird-latest = common {
-    version = "133.0";
-    sha512 = "8cf8973964cabdc7fafe83d1dfd4f9fbfd340638b1f3d396a98059c00650549b0f4a7bfc486a294b2966136266d4524d6c825a6ee344cd753ac2f7ab412cbc96";
+    version = "139.0.2";
+    sha512 = "edb20c692674dc5c3ba70673f7dd03710bf7ac0ce2be614a7a4b3d2b40b20b4974aab2a621dd5b43720c412a590c08f8b78abeb9b61f288f3217c6a04cc1e8ff";
 
     updateScript = callPackage ./update.nix {
       attrPath = "thunderbirdPackages.thunderbird-latest";
@@ -93,8 +100,8 @@ rec {
   thunderbird-esr = thunderbird-128;
 
   thunderbird-128 = common {
-    version = "128.6.1esr";
-    sha512 = "f41936b90aaefde5c6a31a03d1f7ed4b6560729584061d82d032efde3df0836eede807a318d4a403de4a3cd5d6a6f7eace483e08fcc284699176f1b3ad01437a";
+    version = "128.10.1esr";
+    sha512 = "09b54450928c6e0d948cd79a56c28bdb5fe5a81d7c710470a1ec195dd295c433b872682102c74930f19b1184391c30115293dadcd7dc8a08ae8baeb12770ef9c";
 
     updateScript = callPackage ./update.nix {
       attrPath = "thunderbirdPackages.thunderbird-128";

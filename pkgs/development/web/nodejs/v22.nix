@@ -1,4 +1,10 @@
-{ callPackage, fetchpatch2, openssl, python3, enableNpm ? true }:
+{
+  callPackage,
+  fetchpatch2,
+  openssl,
+  python3,
+  enableNpm ? true,
+}:
 
 let
   buildNodejs = callPackage ./nodejs.nix {
@@ -8,8 +14,8 @@ let
 in
 buildNodejs {
   inherit enableNpm;
-  version = "22.14.0";
-  sha256 = "c609946bf793b55c7954c26582760808d54c16185d79cb2fb88065e52de21914";
+  version = "22.16.0";
+  sha256 = "720894f323e5c1ac24968eb2676660c90730d715cb7f090be71a668662a17c37";
   patches = [
     ./configure-emulator.patch
     ./configure-armv6-vfpv2.patch

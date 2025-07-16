@@ -3,6 +3,7 @@
   stdenv,
   buildPythonPackage,
   fetchFromGitHub,
+  fetchpatch,
   pythonOlder,
   substituteAll,
 
@@ -43,7 +44,7 @@
 
 buildPythonPackage rec {
   pname = "django";
-  version = "5.1.6";
+  version = "5.1.11";
   pyproject = true;
 
   disabled = pythonOlder "3.10";
@@ -52,7 +53,7 @@ buildPythonPackage rec {
     owner = "django";
     repo = "django";
     rev = "refs/tags/${version}";
-    hash = "sha256-eqyRiMNMmhg08Pga+AGnhGXfUoTMOuIHEPOEEGboIPE=";
+    hash = "sha256-yHoK7NGa91QEVFLeHqJo126qNg1pTE7W6LEtbCLy4sw=";
   };
 
   patches =
@@ -65,6 +66,13 @@ buildPythonPackage rec {
       ./django_5_tests_pythonpath.patch
       # disable test that excpects timezone issues
       ./django_5_disable_failing_tests.patch
+
+      # fix filename length limit tests on bcachefs
+      # FIXME: remove in 5.2
+      (fetchpatch {
+        url = "https://github.com/django/django/commit/12f4f95405c7857cbf2f4bf4d0261154aac31676.patch";
+        hash = "sha256-+K20/V8sh036Ox9U7CSPgfxue7f28Sdhr3MsB7erVOk=";
+      })
     ]
     ++ lib.optionals withGdal [
       (substituteAll {
@@ -77,7 +85,7 @@ buildPythonPackage rec {
 
   postPatch = ''
     substituteInPlace pyproject.toml \
-      --replace-fail "setuptools>=61.0.0,<69.3.0" setuptools
+      --replace-fail "setuptools>=75.8.1" setuptools
 
     substituteInPlace tests/utils_tests/test_autoreload.py \
       --replace-fail "/usr/bin/python" "${python.interpreter}"

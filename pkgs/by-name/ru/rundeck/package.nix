@@ -11,11 +11,11 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "rundeck";
-  version = "5.8.0-20241205";
+  version = "5.12.0-20250512";
 
   src = fetchurl {
     url = "https://packagecloud.io/pagerduty/rundeck/packages/java/org.rundeck/rundeck-${finalAttrs.version}.war/artifacts/rundeck-${finalAttrs.version}.war/download?distro_version_id=167";
-    hash = "sha256-fqmRYzmBteiZjCmBj30J6RLBzgZgwLcFzUKNFIsH2MQ=";
+    hash = "sha256-LsKxMj+XCKTAMC3aIRnJcJkc2jytfTfu/gi0omGkMEk=";
   };
 
   nativeBuildInputs = [ makeWrapper ];
@@ -30,26 +30,8 @@ stdenv.mkDerivation (finalAttrs: {
     cp $src $out/share/rundeck/rundeck.war
 
     mkdir -p $out/bin
-    # Main rundeck executable
     makeWrapper ${lib.getExe jdk17} $out/bin/rundeck \
-      --set RDECK_BASE "/var/lib/rundeck" \
-      --add-flags "-Xmx4g" \
-      --add-flags "-Drdeck.base=/var/lib/rundeck" \
-      --add-flags "-Drundeck.config.location=/etc/rundeck" \
       --add-flags "-jar $out/share/rundeck/rundeck.war" \
-      --prefix PATH : ${
-        lib.makeBinPath [
-          which
-          coreutils
-          openssh
-        ]
-      }
-
-    # Installation helper script
-    makeWrapper ${lib.getExe jdk17} $out/bin/rundeck-install \
-      --set RDECK_BASE "/var/lib/rundeck" \
-      --add-flags "-jar $out/share/rundeck/rundeck.war" \
-      --add-flags "--installonly" \
       --prefix PATH : ${
         lib.makeBinPath [
           which
@@ -73,6 +55,7 @@ stdenv.mkDerivation (finalAttrs: {
     sourceProvenance = [ lib.sourceTypes.binaryBytecode ];
     license = lib.licenses.asl20;
     platforms = lib.platforms.unix;
-    maintainers = [ lib.maintainers.liberodark ];
+    maintainers = with lib.maintainers; [ liberodark ];
+    mainProgram = "rundeck";
   };
 })

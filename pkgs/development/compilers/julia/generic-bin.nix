@@ -91,14 +91,23 @@ stdenv.mkDerivation {
     stdenv.cc.cc
   ];
 
-  installPhase = ''
-    runHook preInstall
-    cp -r . $out
-    runHook postInstall
-  '';
+  installPhase =
+    ''
+      runHook preInstall
+      cp -r . $out
+    ''
+    + lib.optionalString stdenv.hostPlatform.isLinux ''
+      # "$out/share" is intentionally omitted since it contains
+      # julia package images and patchelf would break them
+      autoPatchelf "$out/bin" "$out/lib" "$out/libexec"
+    ''
+    + ''
+      runHook postInstall
+    '';
 
   # Breaks backtraces, etc.
   dontStrip = true;
+  dontAutoPatchelf = true;
 
   doInstallCheck = true;
 

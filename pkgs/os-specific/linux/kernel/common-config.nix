@@ -80,7 +80,7 @@ let
       # Easier debugging of NFS issues.
       SUNRPC_DEBUG = yes;
       # Provide access to tunables like sched_migration_cost_ns
-      SCHED_DEBUG = yes;
+      SCHED_DEBUG = whenOlder "6.15" yes;
 
       # Count IRQ and steal CPU time separately
       IRQ_TIME_ACCOUNTING = yes;
@@ -263,7 +263,7 @@ let
         IP_VS_PROTO_ESP = yes;
         IP_VS_PROTO_AH = yes;
         IP_VS_IPV6 = yes;
-        IP_DCCP_CCID3 = no; # experimental
+        IP_DCCP_CCID3 = whenOlder "6.16" no; # experimental
         CLS_U32_PERF = yes;
         CLS_U32_MARK = yes;
         BPF_JIT = whenPlatformHasEBPFJit yes;
@@ -837,6 +837,7 @@ let
       CGROUP_HUGETLB = yes;
       CGROUP_PERF = yes;
       CGROUP_RDMA = yes;
+      CGROUP_DMEM = whenAtLeast "6.14" yes;
 
       MEMCG = yes;
       MEMCG_SWAP = whenOlder "6.1" yes;
@@ -1058,6 +1059,10 @@ let
         UNIX = yes; # Unix domain sockets.
 
         MD = yes; # Device mapper (RAID, LVM, etc.)
+
+        # enable support for device trees and overlays
+        OF = option yes;
+        OF_OVERLAY = option yes;
 
         # Enable initrd support.
         BLK_DEV_INITRD = yes;

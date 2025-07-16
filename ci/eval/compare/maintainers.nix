@@ -1,12 +1,18 @@
+{
+  lib,
+}:
 # Almost directly vendored from https://github.com/NixOS/ofborg/blob/5a4e743f192fb151915fcbe8789922fa401ecf48/ofborg/src/maintainers.nix
-{ changedattrs, changedpathsjson }:
+{
+  changedattrs,
+  changedpathsjson,
+  byName ? false,
+}:
 let
   pkgs = import ../../.. {
     system = "x86_64-linux";
     config = { };
     overlays = [ ];
   };
-  inherit (pkgs) lib;
 
   changedpaths = builtins.fromJSON (builtins.readFile changedpathsjson);
 
@@ -24,8 +30,11 @@ let
     pkg:
     if (lib.attrsets.hasAttrByPath pkg.path pkgs) then
       (
-        if (builtins.tryEval (lib.attrsets.attrByPath pkg.path null pkgs)).success then
-          true
+        let
+          value = lib.attrsets.attrByPath pkg.path null pkgs;
+        in
+        if (builtins.tryEval value).success then
+          if value != null then true else builtins.trace "${pkg.name} exists but is null" false
         else
           builtins.trace "Failed to access ${pkg.name} even though it exists" false
       )
@@ -38,7 +47,16 @@ let
   ) validPackageAttributes;
 
   attrsWithMaintainers = builtins.map (
-    pkg: pkg // { maintainers = (pkg.package.meta or { }).maintainers or [ ]; }
+    pkg:
+    let
+      meta = pkg.package.meta or { };
+    in
+    pkg
+    // {
+      # TODO: Refactor this so we can ping entire teams instead of the individual members.
+      # Note that this will require keeping track of GH team IDs in "maintainers/teams.nix".
+      maintainers = meta.maintainers or [ ];
+    }
   ) attrsWithPackages;
 
   relevantFilenames =
@@ -80,12 +98,13 @@ let
     pkg:
     builtins.map (maintainer: {
       id = maintainer.githubId;
+      inherit (maintainer) github;
       packageName = pkg.name;
       dueToFiles = pkg.filenames;
     }) pkg.maintainers
   ) attrsWithModifiedFiles;
 
-  byMaintainer = lib.groupBy (ping: toString ping.id) listToPing;
+  byMaintainer = lib.groupBy (ping: toString ping.${if byName then "github" else "id"}) listToPing;
 
   packagesPerMaintainer = lib.attrsets.mapAttrs (
     maintainer: packages: builtins.map (pkg: pkg.packageName) packages

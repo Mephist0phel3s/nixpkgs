@@ -253,6 +253,8 @@ let
         };
       };
 
+      amazonwebservices.amazon-q-vscode = callPackage ./amazonwebservices.amazon-q-vscode { };
+
       angular.ng-template = buildVscodeMarketplaceExtension {
         mktplcRef = {
           name = "ng-template";
@@ -313,8 +315,8 @@ let
         mktplcRef = {
           name = "vscode-apollo";
           publisher = "apollographql";
-          version = "2.3.6";
-          hash = "sha256-4AehjV7XO9NxS3aHpqm2sKA+kaFbYLrr3E5sUCTRW0I=";
+          version = "2.5.5";
+          hash = "sha256-KlyDbvTVyAacAzq8I6b8isGt5vMo5Ak9xlD8o0Ksy6A=";
         };
         meta = {
           changelog = "https://marketplace.visualstudio.com/items/apollographql.vscode-apollo/changelog";
@@ -358,8 +360,8 @@ let
         mktplcRef = {
           name = "nix-env-selector";
           publisher = "arrterian";
-          version = "1.0.10";
-          hash = "sha256-b3Sr0bwU2VJgl2qcdsUROZ3jnK+YUuzJMySvSD7goj8=";
+          version = "1.0.12";
+          hash = "sha256-xykKAEd+/eKMzKdufQ+wzEIhHFRh4qghWVDKgEJMTs0=";
         };
         meta = {
           license = lib.licenses.mit;
@@ -1282,6 +1284,18 @@ let
         };
       };
 
+      dendron.adjust-heading-level = callPackage ./dendron.adjust-heading-level { };
+
+      dendron.dendron = callPackage ./dendron.dendron { };
+
+      dendron.dendron-markdown-preview-enhanced =
+        callPackage ./dendron.dendron-markdown-preview-enhanced
+          { };
+
+      dendron.dendron-paste-image = callPackage ./dendron.dendron-paste-image { };
+
+      dendron.dendron-snippet-maker = callPackage ./dendron.dendron-snippet-maker { };
+
       denoland.vscode-deno = buildVscodeMarketplaceExtension {
         mktplcRef = {
           name = "vscode-deno";
@@ -1547,8 +1561,8 @@ let
           # semver scheme, contrary to preview versions which are listed on
           # the VSCode Marketplace and use a calver scheme. We should avoid
           # using preview versions, because they expire after two weeks.
-          version = "15.6.0";
-          hash = "sha256-s6ur76DyNhwuZOYma2zPfYEs3lMliRuhdmZhITCSCPE=";
+          version = "16.3.2";
+          hash = "sha256-+TYE2kwgSTYtg8V8M7VSxpxsm6agj8sFun79wIMT5gs=";
         };
         meta = {
           changelog = "https://marketplace.visualstudio.com/items/eamodio.gitlens/changelog";
@@ -1715,24 +1729,6 @@ let
           downloadPage = "https://marketplace.visualstudio.com/items?itemName=enkia.tokyo-night";
           homepage = "https://github.com/enkia/tokyo-night-vscode-theme";
           license = lib.licenses.mit;
-        };
-      };
-
-      equinusocio.vsc-material-theme = callPackage ./equinusocio.vsc-material-theme { };
-
-      equinusocio.vsc-material-theme-icons = buildVscodeMarketplaceExtension {
-        mktplcRef = {
-          name = "vsc-material-theme-icons";
-          publisher = "Equinusocio";
-          version = "3.8.8";
-          hash = "sha256-el2hQaq1gZBn2PZ+f+S1fHM/g3V0sX7Chyre04sds8k=";
-        };
-        meta = {
-          description = "Material Theme Icons, the most epic icons theme for Visual Studio Code and Material Theme";
-          downloadPage = "https://marketplace.visualstudio.com/items?itemName=Equinusocio.vsc-material-theme-icons";
-          homepage = "https://github.com/material-theme/vsc-material-theme-icons";
-          license = lib.licenses.asl20;
-          maintainers = [ lib.maintainers.themaxmur ];
         };
       };
 
@@ -2280,8 +2276,8 @@ let
         mktplcRef = {
           name = "haskell";
           publisher = "haskell";
-          version = "2.2.2";
-          hash = "sha256-zWdIVdz+kZg7KZQ7LeBCB4aB9wg8dUbkWfzGlM0Fq7Q=";
+          version = "2.4.4";
+          hash = "sha256-O7tfZ1bQmlMgZGoWuECjSno6DLCO0+CCteRhT6PjZBY=";
         };
         meta = {
           license = lib.licenses.mit;
@@ -2416,6 +2412,23 @@ let
           description = "ANSI color styling for text documents";
           downloadPage = "https://marketplace.visualstudio.com/items?itemName=iliazeus.vscode-ansi";
           homepage = "https://github.com/iliazeus/vscode-ansi";
+          license = lib.licenses.mit;
+        };
+      };
+
+      illixion.vscode-vibrancy-continued = buildVscodeMarketplaceExtension {
+        mktplcRef = {
+          name = "vscode-vibrancy-continued";
+          publisher = "illixion";
+          version = "1.1.44";
+          hash = "sha256-1oEfnS7BBKPJ9cSu05S6GQsN76nk5JW7aBq/2O8raSY=";
+        };
+        meta = {
+          downloadPage = "https://marketplace.visualstudio.com/items?itemName=illixion.vscode-vibrancy-continued";
+          changelog = "https://marketplace.visualstudio.com/items/illixion.vscode-vibrancy-continued/changelog";
+          homepage = "https://github.com/illixion/vscode-vibrancy-continued#readme";
+          description = "Vibrancy Effect for Visual Studio Code";
+          maintainers = with lib.maintainers; [ _2hexed ];
           license = lib.licenses.mit;
         };
       };
@@ -2641,14 +2654,14 @@ let
         mktplcRef = {
           name = "nix-ide";
           publisher = "jnoortheen";
-          version = "0.3.1";
-          hash = "sha256-05oMDHvFM/dTXB6T3rcDK3EiNG2T0tBN9Au9b+Bk7rI=";
+          version = "0.4.12";
+          hash = "sha256-3pXypgAwg/iEBUqPeNsyoX2oYqlKMVdemEhmhy1PuGU=";
         };
         meta = {
           changelog = "https://marketplace.visualstudio.com/items/jnoortheen.nix-ide/changelog";
           description = "Nix language support with formatting and error report";
           downloadPage = "https://marketplace.visualstudio.com/items?itemName=jnoortheen.nix-ide";
-          homepage = "https://github.com/jnoortheen/vscode-nix-ide";
+          homepage = "https://github.com/nix-community/vscode-nix-ide";
           license = lib.licenses.mit;
           maintainers = [ ];
         };
@@ -2916,8 +2929,8 @@ let
         mktplcRef = {
           name = "vscode-clangd";
           publisher = "llvm-vs-code-extensions";
-          version = "0.1.24";
-          hash = "sha256-yOpsYjjwHRXxbiHDPgrtswUtgbQAo+3RgN2s6UYe9mg=";
+          version = "0.1.33";
+          hash = "sha256-NAQ7qT99vudcb/R55pKY3M5H6sV32aB4P8IWZKVQJas=";
         };
         meta = {
           description = "C/C++ completion, navigation, and insights";
@@ -4554,8 +4567,8 @@ let
         mktplcRef = {
           name = "code-spell-checker";
           publisher = "streetsidesoftware";
-          version = "4.0.21";
-          hash = "sha256-AcZAhmJeAD4nGDhBXieUxldzNZhTPCOg6W44Sc7W4H0=";
+          version = "4.0.41";
+          hash = "sha256-M/uqzU64nqSdRtxxQ1H+pg0YdkqYXEHlxmXrVcn/UqA=";
         };
         meta = {
           changelog = "https://marketplace.visualstudio.com/items/streetsidesoftware.code-spell-checker/changelog";
@@ -5251,8 +5264,8 @@ let
         mktplcRef = {
           name = "vim";
           publisher = "vscodevim";
-          version = "1.26.1";
-          hash = "sha256-zshuABicdkT52Nqj1L2RrfMziBRgO+R15fM32SCnyXI=";
+          version = "1.29.0";
+          hash = "sha256-J3V8SZJZ2LSL8QfdoOtHI1ZDmGDVerTRYP4NZU17SeQ=";
         };
         meta = {
           license = lib.licenses.mit;
@@ -5380,6 +5393,23 @@ let
           downloadPage = "https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case";
           homepage = "https://github.com/wmaurer/vscode-change-case";
           license = lib.licenses.mit;
+        };
+      };
+
+      woberg.godot-dotnet-tools = buildVscodeMarketplaceExtension {
+        mktplcRef = {
+          publisher = "woberg";
+          name = "godot-dotnet-tools";
+          version = "0.5.1";
+          hash = "sha256-qZdQiW1RvzUR5+5QlVdMPBY82IOPUPs3GNOl6bOhnWM=";
+        };
+        meta = {
+          description = "VSCode extension for Godot 4 Mono supporting C# language";
+          downloadPage = "https://marketplace.visualstudio.com/items?itemName=woberg.godot-dotnet-tools";
+          homepage = "https://github.com/williamoberg/godot-dotnet-tools";
+          license = lib.licenses.mit;
+          # For instructions on configuring this extension see:
+          # https://wiki.nixos.org/wiki/Godot-Mono
         };
       };
 
@@ -5612,6 +5642,8 @@ let
     _2gua = throw "_2gua is deprecated in favor of 2gua"; # Added 2024-05-29
     _4ops = throw "_4ops is deprecated in favor of 4ops"; # Added 2024-05-29
     Arjun.swagger-viewer = throw "Arjun.swagger-viewer is deprecated in favor of arjun.swagger-viewer"; # Added 2024-05-29
+    equinusocio.vsc-material-theme = throw "'equinusocio.vsc-material-theme' has been removed due to security concerns. The extension contained potentially malicious code and was taken down."; # Added 2025-02-28
+    equinusocio.vsc-material-theme-icons = throw "'equinusocio.vsc-material-theme-icons' has been removed due to security concerns. The extension contained potentially malicious code and was taken down."; # Added 2025-02-28
     jakebecker.elixir-ls = throw "jakebecker.elixir-ls is deprecated in favor of elixir-lsp.vscode-elixir-ls"; # Added 2024-05-29
     jpoissonnier.vscode-styled-components = throw "jpoissonnier.vscode-styled-components is deprecated in favor of styled-components.vscode-styled-components"; # Added 2024-05-29
     matklad.rust-analyzer = throw "matklad.rust-analyzer is deprecated in favor of rust-lang.rust-analyzer"; # Added 2024-05-29

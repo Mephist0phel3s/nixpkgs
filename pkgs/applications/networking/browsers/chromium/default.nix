@@ -35,6 +35,7 @@
   pulseSupport ? config.pulseaudio or stdenv.hostPlatform.isLinux,
   commandLineArgs ? "",
   pkgsBuildBuild,
+  pkgsBuildHost,
   pkgs,
 }:
 
@@ -50,8 +51,10 @@ let
     min-version: result:
     let
       min-supported-version = (lib.head (lib.attrValues electron-source)).unwrapped.info.chromium.version;
+      # Warning can be toggled by changing the value of enabled:
+      enabled = false;
     in
-    lib.warnIf (lib.versionAtLeast min-supported-version min-version)
+    lib.warnIf (enabled && lib.versionAtLeast min-supported-version min-version)
       "chromium: min-supported-version ${min-supported-version} is newer than a conditional bounded at ${min-version}. You can safely delete it."
       result;
   chromiumVersionAtLeast =
@@ -82,27 +85,23 @@ let
           pulseSupport
           ungoogled
           ;
-        gnChromium = buildPackages.gn.overrideAttrs (
-          oldAttrs:
-          {
-            version = if (upstream-info.deps.gn ? "version") then upstream-info.deps.gn.version else "0";
-            src = fetchgit {
-              url = "https://gn.googlesource.com/gn";
-              inherit (upstream-info.deps.gn) rev hash;
-            };
+        gnChromium = buildPackages.gn.overrideAttrs (oldAttrs: {
+          version = if (upstream-info.deps.gn ? "version") then upstream-info.deps.gn.version else "0";
+          src = fetchgit {
+            url = "https://gn.googlesource.com/gn";
+            inherit (upstream-info.deps.gn) rev hash;
+          };
 
-            # Relax hardening as otherwise gn unstable 2024-06-06 and later fail with:
-            # cc1plus: error: '-Wformat-security' ignored without '-Wformat' [-Werror=format-security]
-            hardeningDisable = [ "format" ];
-          }
-          // lib.optionalAttrs (chromiumVersionAtLeast "130") {
-            # At the time of writing, gn is at v2024-05-13 and has a backported patch.
-            # This patch appears to be already present in v2024-09-09 (from M130), which
-            # results in the patch not applying and thus failing the build.
-            # As a work around until gn is updated again, we filter specifically that patch out.
-            patches = lib.filter (e: lib.getName e != "LFS64.patch") oldAttrs.patches;
-          }
-        );
+          # Relax hardening as otherwise gn unstable 2024-06-06 and later fail with:
+          # cc1plus: error: '-Wformat-security' ignored without '-Wformat' [-Werror=format-security]
+          hardeningDisable = [ "format" ];
+
+          # At the time of writing, gn is at v2024-05-13 and has a backported patch.
+          # This patch appears to be already present in v2024-09-09 (from M130), which
+          # results in the patch not applying and thus failing the build.
+          # As a work around until gn is updated again, we filter specifically that patch out.
+          patches = lib.filter (e: lib.getName e != "LFS64.patch") oldAttrs.patches;
+        });
       }
       // lib.optionalAttrs (lib.versionAtLeast upstream-info.version "132") {
         buildPackages = buildPackages // {
@@ -110,6 +109,12 @@ let
         };
         pkgsBuildBuild = pkgsBuildBuild // {
           rustc = pkgsBuildBuild.rustPackages_1_83.rustc;
+        };
+      }
+      // lib.optionalAttrs (lib.versionAtLeast upstream-info.version "136") {
+        nodejs = pkgs.nodejs_22;
+        pkgsBuildHost = pkgsBuildHost // {
+          nodejs = pkgsBuildHost.nodejs_22;
         };
       }
     );

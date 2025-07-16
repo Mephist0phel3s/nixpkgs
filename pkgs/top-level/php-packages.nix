@@ -420,7 +420,15 @@ lib.makeScope pkgs.newScope (
                 configureFlags = [ "--with-bz2=${bzip2.dev}" ];
               }
               { name = "calendar"; }
-              { name = "ctype"; }
+              {
+                name = "ctype";
+                postPatch =
+                  lib.optionalString (stdenv.hostPlatform.isDarwin && lib.versionAtLeast php.version "8.2")
+                    # Broken test on aarch64-darwin
+                    ''
+                      rm ext/ctype/tests/lc_ctype_inheritance.phpt
+                    '';
+              }
               {
                 name = "curl";
                 buildInputs = [ curl ];

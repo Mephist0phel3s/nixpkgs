@@ -6,6 +6,7 @@
   nextcloud28Packages,
   nextcloud29Packages,
   nextcloud30Packages,
+  nextcloud31Packages,
 }:
 
 let
@@ -66,15 +67,21 @@ in
   };
 
   nextcloud29 = generic {
-    version = "29.0.11";
-    hash = "sha256-UGf8F91zICzC39m5ccp7uUy5UEghRgJ9rGILEjweztE=";
+    version = "29.0.16";
+    hash = "sha256-SZv2GrGe3NTlQq+GYJJDxbT0QOtbsGwrp9oML6pSUyI=";
     packages = nextcloud29Packages;
   };
 
   nextcloud30 = generic {
-    version = "30.0.5";
-    hash = "sha256-JIxubmEs7usXDE0luFebCvDmYTq9+gfy/mmTQmt4G+o=";
+    version = "30.0.11";
+    hash = "sha256-WEJ3LV1xLxBdyPFdZ4hFnmFEuDbMiKBiyQU3CiZUN3o=";
     packages = nextcloud30Packages;
+  };
+
+  nextcloud31 = generic {
+    version = "31.0.5";
+    hash = "sha256-Iii49STc2H8IoqkoHUGwT1y1ALdiS8jI4HuOMDkGFQM=";
+    packages = nextcloud31Packages;
   };
 
   # tip: get the sha with:

@@ -156,11 +156,11 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "wavebox";
-  version = "10.132.2-2";
+  version = "10.133.4-2";
 
   src = fetchurl {
     url = "https://download.wavebox.app/stable/linux/deb/amd64/wavebox_${finalAttrs.version}_amd64.deb";
-    hash = "sha256-PPeYU8VN1tr2fpSnq/e1/OmWCjJEicdb3NVb+oFVD14=";
+    hash = "sha256-E7Hvz8HrWLTs7H6wPVN89PVTPWL0T+DjpnIGS17xw2s=";
   };
 
   nativeBuildInputs = [
@@ -236,6 +236,9 @@ stdenv.mkDerivation (finalAttrs: {
   };
 
   meta = {
+    knownVulnerabilities = [
+      "wavebox has been removed in NixOS unstable. It's an unmaintained security relevant package"
+    ];
     description = "Wavebox Productivity Browser";
     homepage = "https://wavebox.io";
     license = lib.licenses.unfree;

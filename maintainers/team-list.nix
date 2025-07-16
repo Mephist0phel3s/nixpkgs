@@ -134,6 +134,19 @@ with lib.maintainers;
     shortName = "c3d2";
   };
 
+  ci = {
+    members = [
+      MattSturgeon
+      mic92
+      philiptaron
+      wolfgangwalther
+      zowoq
+    ];
+    githubTeams = [ "nixpkgs-ci" ];
+    scope = "Maintain Nixpkgs' in-tree Continuous Integration, including GitHub Actions.";
+    shortName = "CI";
+  };
+
   cinnamon = {
     members = [
       bobby285271
@@ -748,11 +761,14 @@ with lib.maintainers;
     shortName = "Mercury Employees";
   };
 
+  # same as https://github.com/orgs/NixOS/teams/nix-team
   nix = {
     members = [
       eelco
-      grahamc
-      pierron
+      mic92
+      tomberek
+      roberth
+      ericson2314
     ];
     scope = "Maintain the Nix package manager.";
     shortName = "Nix/nix-cli ecosystem";

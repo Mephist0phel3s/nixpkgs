@@ -58,14 +58,18 @@ lib.makeExtensible (self: {
       version = "2.90.0";
       hash = "sha256-f8k+BezKdJfmE+k7zgBJiohtS3VkkriycdXYsKOm3sc=";
       docCargoHash = "sha256-vSf9MyD2XzofZlbzsmh6NP69G+LiX72GX4Um9UJp3dc=";
+
+      knownVulnerabilities = [
+        "Lix is 2.90 is vulnerable to CVE-2025-46415 and CVE-2025-46416 and will not receive updates."
+      ];
     }
   );
 
   lix_2_91 = (
     common {
-      version = "2.91.1";
-      hash = "sha256-hiGtfzxFkDc9TSYsb96Whg0vnqBVV7CUxyscZNhed0U=";
-      docCargoHash = "sha256-F6Ld0HfRvW9r5zn8eMTP6djnV/jvwjYQet4Ghp2T90k=";
+      version = "2.91.3";
+      hash = "sha256-b5d+HnPcyHz0ZJW1+LZl4qm4LGTB/TiaDFQVlVL2xpE=";
+      docCargoHash = "sha256-0UHx3YLqtDKlGPnVkJATs/OQ1Yq2jMdIeL3CKFfxhaA=";
     }
   );
 

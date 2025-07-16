@@ -19,9 +19,23 @@
   git,
 }:
 
+let
+  patchGoVersion = ''
+    find . -name go.mod -not -path "./.bingo/*" -print0 | while IFS= read -r -d ''' line; do
+      substituteInPlace "$line" \
+        --replace-fail "go 1.24.3" "go 1.24.2"
+    done
+    find . -name go.work -print0 | while IFS= read -r -d ''' line; do
+      substituteInPlace "$line" \
+        --replace-fail "go 1.24.3" "go 1.24.2"
+    done
+    substituteInPlace Makefile \
+      --replace-fail "GO_VERSION = 1.24.3" "GO_VERSION = 1.24.2"
+  '';
+in
 buildGoModule rec {
   pname = "grafana";
-  version = "11.3.3";
+  version = "11.3.7+security-01";
 
   subPackages = [
     "pkg/cmd/grafana"
@@ -33,7 +47,7 @@ buildGoModule rec {
     owner = "grafana";
     repo = "grafana";
     rev = "v${version}";
-    hash = "sha256-E/yuPzoB5g0obIsRJ+5AcsNuZbMKHfl23+i1YMN7Tig=";
+    hash = "sha256-NEJhxHZI+9MjBMe6Y1rtjMgVHfSolOahRlJgSlcIKuM=";
   };
 
   # borrowed from: https://github.com/NixOS/nixpkgs/blob/d70d9425f49f9aba3c49e2c389fe6d42bac8c5b0/pkgs/development/tools/analysis/snyk/default.nix#L20-L22
@@ -86,7 +100,9 @@ buildGoModule rec {
 
   disallowedRequisites = [ offlineCache ];
 
-  vendorHash = "sha256-m4Uu6cY9tT3Mn70xWqLz/8zom1koTL0uxyX/4Q5iBGY=";
+  postPatch = patchGoVersion;
+
+  vendorHash = "sha256-RzjY1DUKpYx+7MMU3nWj3NNt2M9jfUbtZj6V6iK35Po=";
 
   proxyVendor = true;
 

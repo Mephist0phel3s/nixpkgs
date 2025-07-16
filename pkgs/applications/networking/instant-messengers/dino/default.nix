@@ -1,37 +1,51 @@
-{ lib, stdenv, fetchFromGitHub
-, buildPackages
-, vala, cmake, ninja, wrapGAppsHook4, pkg-config, gettext
-, gobject-introspection, glib, gdk-pixbuf, gtk4, glib-networking
-, libadwaita
-, libnotify, libsoup, libgee
-, libsignal-protocol-c
-, libgcrypt
-, sqlite
-, gpgme
-, pcre2
-, qrencode
-, icu
-, gspell
-, srtp
-, libnice
-, gnutls
-, gstreamer
-, gst-plugins-base
-, gst-plugins-good
-, gst-plugins-bad
-, gst-vaapi
-, webrtc-audio-processing
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  buildPackages,
+  vala,
+  cmake,
+  ninja,
+  wrapGAppsHook4,
+  pkg-config,
+  gettext,
+  gobject-introspection,
+  glib,
+  gdk-pixbuf,
+  gtk4,
+  glib-networking,
+  libadwaita,
+  libnotify,
+  libsoup,
+  libgee,
+  libsignal-protocol-c,
+  libgcrypt,
+  sqlite,
+  gpgme,
+  pcre2,
+  qrencode,
+  icu,
+  gspell,
+  srtp,
+  libnice,
+  gnutls,
+  gstreamer,
+  gst-plugins-base,
+  gst-plugins-good,
+  gst-plugins-bad,
+  gst-vaapi,
+  webrtc-audio-processing,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "dino";
-  version = "0.4.4";
+  version = "0.4.5";
 
   src = fetchFromGitHub {
     owner = "dino";
     repo = "dino";
     rev = "v${finalAttrs.version}";
-    sha256 = "sha256-I0ASeEjdXyxhz52QisU0q8mIBTKMfjaspJbxRIyOhD4=";
+    sha256 = "sha256-lF2cUalCrVD6274Ey8wggEXNvKXydlRjvX+815geL1c=";
   };
 
   postPatch = ''
@@ -125,6 +139,9 @@ stdenv.mkDerivation (finalAttrs: {
     homepage = "https://github.com/dino/dino";
     license = licenses.gpl3Plus;
     platforms = platforms.linux ++ platforms.darwin;
-    maintainers = with maintainers; [ qyliss tomfitzhenry ];
+    maintainers = with maintainers; [
+      qyliss
+      tomfitzhenry
+    ];
   };
 })

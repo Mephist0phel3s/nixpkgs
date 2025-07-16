@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  fetchpatch2,
   lua,
   jemalloc,
   pkg-config,
@@ -23,16 +24,22 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "valkey";
-  version = "8.0.2";
+  version = "8.0.3";
 
   src = fetchFromGitHub {
     owner = "valkey-io";
     repo = "valkey";
     rev = finalAttrs.version;
-    hash = "sha256-05EuPjVokzfJxhrnvFHD7prwt5y7gPxemeDIkLML7lw=";
+    hash = "sha256-IzerctJUc478dJu2AH20s/A3psiAZWDjQG3USQWqpos=";
   };
 
-  patches = lib.optional useSystemJemalloc ./use_system_jemalloc.patch;
+  patches = [
+    (fetchpatch2 {
+      name = "CVE-2025-27151.patch";
+      url = "https://github.com/valkey-io/valkey/commit/73696bf6e2cf754acc3ec24eaf9ca6b879bfc5d7.patch?full_index=1";
+      hash = "sha256-9yt2GXfC8piyLskkMkXouEX5ZQwZLtL+MN6n6HuC/V4=";
+    })
+  ] ++ lib.optional useSystemJemalloc ./use_system_jemalloc.patch;
 
   nativeBuildInputs = [ pkg-config ];
 
@@ -100,7 +107,7 @@ stdenv.mkDerivation (finalAttrs: {
     description = "High-performance data structure server that primarily serves key/value workloads";
     license = licenses.bsd3;
     platforms = platforms.all;
-    maintainers = with maintainers; [ rucadi ];
+    maintainers = with maintainers; [ ];
     changelog = "https://github.com/valkey-io/valkey/releases/tag/${finalAttrs.version}";
     mainProgram = "valkey-cli";
   };

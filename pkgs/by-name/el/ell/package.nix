@@ -1,23 +1,28 @@
-{ lib, stdenv
-, fetchgit
-, autoreconfHook
-, pkg-config
-, dbus
-, sysctl
-, gitUpdater
+{
+  lib,
+  stdenv,
+  fetchgit,
+  autoreconfHook,
+  pkg-config,
+  dbus,
+  sysctl,
+  gitUpdater,
 }:
 
 stdenv.mkDerivation rec {
   pname = "ell";
-  version = "0.69";
+  version = "0.70";
 
-  outputs = [ "out" "dev" ];
+  outputs = [
+    "out"
+    "dev"
+  ];
   separateDebugInfo = true;
 
   src = fetchgit {
     url = "https://git.kernel.org/pub/scm/libs/ell/ell.git";
     rev = version;
-    hash = "sha256-FOEVnpndbIufb8i6egBIoG1PC01WxtAlf3I47YqM+hk=";
+    hash = "sha256-2JPmS+OuK1cQyBRR0kDDWXBDUWUZuK/vsQ483GLu/S0=";
   };
 
   nativeBuildInputs = [
@@ -54,6 +59,9 @@ stdenv.mkDerivation rec {
     changelog = "https://git.kernel.org/pub/scm/libs/ell/ell.git/tree/ChangeLog?h=${version}";
     license = licenses.lgpl21Plus;
     platforms = platforms.linux;
-    maintainers = with maintainers; [ mic92 dtzWill ];
+    maintainers = with maintainers; [
+      mic92
+      dtzWill
+    ];
   };
 }

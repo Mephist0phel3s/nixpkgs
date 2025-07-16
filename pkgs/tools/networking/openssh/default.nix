@@ -7,29 +7,40 @@
 }:
 let
   common = opts: callPackage (import ./common.nix opts) { };
+
+  # https://github.com/advisories/GHSA-26mg-p594-q328
+  fix-cve-2025-32738 = fetchpatch {
+    name = "fix-cve-2025-32738.patch";
+    url = "https://ftp.openbsd.org/pub/OpenBSD/patches/7.6/common/013_ssh.patch.sig";
+    hash = "sha256-YF8tda2lYrSeKEp0KPqu/QHcR1rMKRnhu+Tpb8DeX9I=";
+    stripLen = 1;
+  };
 in
 {
   openssh = common rec {
     pname = "openssh";
-    version = "9.9p1";
+    version = "9.9p2";
 
     src = fetchurl {
       url = "mirror://openbsd/OpenSSH/portable/openssh-${version}.tar.gz";
-      hash = "sha256-s0P7zb/4fxWxmG5uFdbU/Jp9NgZr5rf7UHCHuo+WbAI=";
+      hash = "sha256-karbYD4IzChe3fll4RmdAlhfqU2ZTWyuW0Hhch4hVnM=";
     };
 
-    extraPatches = [ ./ssh-keysign-8.5.patch ];
+    extraPatches = [
+      ./ssh-keysign-8.5.patch
+      fix-cve-2025-32738
+    ];
     extraMeta.maintainers = lib.teams.helsinki-systems.members;
   };
 
   openssh_hpn = common rec {
     pname = "openssh-with-hpn";
-    version = "9.9p1";
+    version = "9.9p2";
     extraDesc = " with high performance networking patches";
 
     src = fetchurl {
       url = "mirror://openbsd/OpenSSH/portable/openssh-${version}.tar.gz";
-      hash = "sha256-s0P7zb/4fxWxmG5uFdbU/Jp9NgZr5rf7UHCHuo+WbAI=";
+      hash = "sha256-karbYD4IzChe3fll4RmdAlhfqU2ZTWyuW0Hhch4hVnM=";
     };
 
     extraPatches =
@@ -38,6 +49,7 @@ in
       in
       [
         ./ssh-keysign-8.5.patch
+        fix-cve-2025-32738
 
         # HPN Patch from FreeBSD ports
         (fetchpatch {
@@ -67,21 +79,22 @@ in
 
   openssh_gssapi = common rec {
     pname = "openssh-with-gssapi";
-    version = "9.9p1";
+    version = "9.9p2";
     extraDesc = " with GSSAPI support";
 
     src = fetchurl {
       url = "mirror://openbsd/OpenSSH/portable/openssh-${version}.tar.gz";
-      hash = "sha256-s0P7zb/4fxWxmG5uFdbU/Jp9NgZr5rf7UHCHuo+WbAI=";
+      hash = "sha256-karbYD4IzChe3fll4RmdAlhfqU2ZTWyuW0Hhch4hVnM=";
     };
 
     extraPatches = [
       ./ssh-keysign-8.5.patch
+      fix-cve-2025-32738
 
       (fetchpatch {
         name = "openssh-gssapi.patch";
-        url = "https://salsa.debian.org/ssh-team/openssh/raw/debian/1%25${version}-2/debian/patches/gssapi.patch";
-        hash = "sha256-cQF5psMZpLWwVqK9CNi+Q8wHn6w6ffQUJRNI5jKGgD0=";
+        url = "https://salsa.debian.org/ssh-team/openssh/raw/debian/1%25${version}-1/debian/patches/gssapi.patch";
+        hash = "sha256-JyOXA8Al8IFLdndJQ1LO+r4hJqtXjz1NHwOPiSAQkE8=";
       })
     ];
 

@@ -3,8 +3,8 @@
   lib,
   makeWrapper,
   patchelf,
-  stdenv,
   stdenvNoCC,
+  bintools,
 
   # Linked dynamic libraries.
   alsa-lib,
@@ -169,13 +169,13 @@ let
       qt6.qtwayland
     ];
 
-  linux = stdenv.mkDerivation (finalAttrs: {
+  linux = stdenvNoCC.mkDerivation (finalAttrs: {
     inherit pname meta passthru;
-    version = "133.0.6943.53";
+    version = "138.0.7204.49";
 
     src = fetchurl {
       url = "https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${finalAttrs.version}-1_amd64.deb";
-      hash = "sha256-73X2cohboI+GbFDk5ikjxnT1PKjG4UoyzhA9T9Qe9Vk=";
+      hash = "sha256-FHYjo8rPmruJWEpHnkJHs5Ht0NP2GwGSKNYbDCtQmSY=";
     };
 
     # With strictDeps on, some shebangs were not being patched correctly
@@ -199,7 +199,7 @@ let
 
     unpackPhase = ''
       runHook preUnpack
-      ar x $src
+      ${lib.getExe' bintools "ar"} x $src
       tar xf data.tar.xz
       runHook postUnpack
     '';
@@ -225,6 +225,8 @@ let
 
       substituteInPlace $out/share/google/$appname/google-$appname \
         --replace-fail 'CHROME_WRAPPER' 'WRAPPER'
+      substituteInPlace $out/share/applications/com.google.Chrome.desktop \
+        --replace-fail /usr/bin/google-chrome-$dist $exe
       substituteInPlace $out/share/applications/google-$appname.desktop \
         --replace-fail /usr/bin/google-chrome-$dist $exe
       substituteInPlace $out/share/gnome-control-center/default-apps/google-$appname.xml \
@@ -265,7 +267,7 @@ let
 
       for elf in $out/share/google/$appname/{chrome,chrome-sandbox,chrome_crashpad_handler}; do
         patchelf --set-rpath $rpath $elf
-        patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $elf
+        patchelf --set-interpreter ${bintools.dynamicLinker} $elf
       done
 
       runHook postInstall
@@ -274,11 +276,11 @@ let
 
   darwin = stdenvNoCC.mkDerivation (finalAttrs: {
     inherit pname meta passthru;
-    version = "133.0.6943.54";
+    version = "138.0.7204.50";
 
     src = fetchurl {
-      url = "http://dl.google.com/release2/chrome/acyg7rfg57oedifn3wrcxvaq5duq_133.0.6943.54/GoogleChrome-133.0.6943.54.dmg";
-      hash = "sha256-VkLjnKjAgj9Fg21jh9Xl56XDBmG0OUuDsnj93rQvJ40=";
+      url = "http://dl.google.com/release2/chrome/a4ahzfkgyxfqoxgobvw6tfhnre_138.0.7204.50/GoogleChrome-138.0.7204.50.dmg";
+      hash = "sha256-/VsCUAowk59whR7GYBqzNjp3+aMih68L/6zbfytesOk=";
     };
 
     dontPatch = true;
@@ -325,4 +327,9 @@ let
     mainProgram = "google-chrome-stable";
   };
 in
-if stdenvNoCC.hostPlatform.isDarwin then darwin else linux
+if stdenvNoCC.hostPlatform.isDarwin then
+  darwin
+else if stdenvNoCC.hostPlatform.isLinux then
+  linux
+else
+  throw "Unsupported platform ${stdenvNoCC.hostPlatform.system}"

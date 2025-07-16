@@ -9,21 +9,20 @@
   cairo,
   pango,
   stdenv,
-  olm,
 }:
 
 buildNpmPackage rec {
   pname = "cinny-unwrapped";
-  version = "4.2.3";
+  version = "4.6.0";
 
   src = fetchFromGitHub {
     owner = "cinnyapp";
     repo = "cinny";
     rev = "v${version}";
-    hash = "sha256-BoUQURCfEu5kocMm8T25cVl8hgZGxcxrMzQZOl2fAbY=";
+    hash = "sha256-MyVKRWhLXxz4h2/2OtpmYrLYiZeNOMEetHwl4NklkOA=";
   };
 
-  npmDepsHash = "sha256-fDoia6evCmXZgeIKL0coRo3yunX1dfud31ROgmop2Sc=";
+  npmDepsHash = "sha256-WNK1ke5NEbt2Gb92hEItnwu65rI/5VsbZDfTSp6aKvg=";
 
   # Fix error: no member named 'aligned_alloc' in the global namespace
   env.NIX_CFLAGS_COMPILE = lib.optionalString (
@@ -55,6 +54,5 @@ buildNpmPackage rec {
     maintainers = with lib.maintainers; [ abbe ];
     license = lib.licenses.agpl3Only;
     platforms = lib.platforms.all;
-    inherit (olm.meta) knownVulnerabilities;
   };
 }

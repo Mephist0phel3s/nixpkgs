@@ -882,12 +882,12 @@ fn new_dbus_proxies<'a>(
         conn.with_proxy(
             "org.freedesktop.systemd1",
             "/org/freedesktop/systemd1",
-            Duration::from_millis(5000),
+            Duration::from_millis(10000),
         ),
         conn.with_proxy(
             "org.freedesktop.login1",
             "/org/freedesktop/login1",
-            Duration::from_millis(5000),
+            Duration::from_millis(10000),
         ),
     )
 }
@@ -1027,7 +1027,7 @@ fn do_system_switch(action: Action) -> anyhow::Result<()> {
         die();
     };
 
-    let Ok(_lock) = Flock::lock(lock, FlockArg::LockExclusive) else {
+    let Ok(_lock) = Flock::lock(lock, FlockArg::LockExclusiveNonblock) else {
         eprintln!("Could not acquire lock");
         die();
     };

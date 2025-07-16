@@ -5,6 +5,7 @@
   autoPatchelfHook,
   noto-fonts-color-emoji,
   dpkg,
+  libarchive,
   asar,
   rsync,
   python3,
@@ -42,6 +43,7 @@
   at-spi2-core,
   libappindicator-gtk3,
   mesa,
+  libwebp,
   # Runtime dependencies:
   systemd,
   libnotify,
@@ -53,7 +55,9 @@
 
 {
   pname,
-  dir,
+  libdir,
+  bindir,
+  extractPkg,
   version,
   hash,
   url,
@@ -83,6 +87,15 @@ let
       runHook postInstall
     '';
   });
+
+  noto-emoji-sheet-32 = fetchurl {
+    url = "https://raw.githubusercontent.com/iamcal/emoji-data/refs/tags/v15.1.2/sheet_google_32.png";
+    hash = "sha256-S03NCTbvB5yeQl62WpLNjNGhjNErtgaOB6tAj/X8vPc=";
+  };
+  noto-emoji-sheet-64 = fetchurl {
+    url = "https://raw.githubusercontent.com/iamcal/emoji-data/refs/tags/v15.1.2/sheet_google_64.png";
+    hash = "sha256-kZYStR5xAuausSpOD6wJZRJZ1K6nPpweE3aYSgWntS4=";
+  };
 in
 stdenv.mkDerivation rec {
   inherit pname version;
@@ -100,7 +113,7 @@ stdenv.mkDerivation rec {
     recursiveHash = true;
     downloadToTemp = true;
     nativeBuildInputs = [
-      dpkg
+      (if ARCH == "x64" then dpkg else libarchive)
       asar
     ];
     # Signal ships the Apple emoji set without a licence via an npm
@@ -117,11 +130,12 @@ stdenv.mkDerivation rec {
     # unlicensed emoji files, but the rest of the work is done in the
     # main derivation.
     postFetch = ''
-      dpkg-deb -x $downloadedFile $out
-      asar extract "$out/opt/${dir}/resources/app.asar" $out/asar-contents
+      ${extractPkg}
+      asar extract "$out/${libdir}/resources/app.asar" $out/asar-contents
       rm -r \
-        "$out/opt/${dir}/resources/app.asar"{,.unpacked} \
-        $out/asar-contents/node_modules/emoji-datasource-apple
+        "$out/${libdir}/resources/app.asar"{,.unpacked} \
+        $out/asar-contents/images/emoji-sheet-32.webp \
+        $out/asar-contents/images/emoji-sheet-64.webp
     '';
   };
 
@@ -133,6 +147,7 @@ stdenv.mkDerivation rec {
     # override doesn't preserve splicing https://github.com/NixOS/nixpkgs/issues/132651
     # Has to use `makeShellWrapper` from `buildPackages` even though `makeShellWrapper` from the inputs is spliced because `propagatedBuildInputs` would pick the wrong one because of a different offset.
     (buildPackages.wrapGAppsHook3.override { makeWrapper = buildPackages.makeShellWrapper; })
+    libwebp
   ];
 
   buildInputs = [
@@ -196,14 +211,18 @@ stdenv.mkDerivation rec {
     mkdir -p $out/lib
 
     mv usr/share $out/share
-    mv "opt/${dir}" "$out/lib/${dir}"
+    mv "${libdir}" "$out/lib/signal-desktop"
 
     # Symlink to bin
     mkdir -p $out/bin
-    ln -s "$out/lib/${dir}/${pname}" $out/bin/${pname}
+    ln -s "$out/lib/signal-desktop/signal-desktop" $out/bin/${meta.mainProgram}
 
     # Create required symlinks:
-    ln -s libGLESv2.so "$out/lib/${dir}/libGLESv2.so.2"
+    ln -s libGLESv2.so "$out/lib/signal-desktop/libGLESv2.so.2"
+
+    # Compress the emoji sheets to webp, as signal expects webp images. The flags used are the same as those used upstream.
+    cwebp -progress -mt -preset icon -alpha_filter best -alpha_q 20 -pass 10 -q 75 ${noto-emoji-sheet-32} -o asar-contents/images/emoji-sheet-32.webp
+    cwebp -progress -mt -preset icon -alpha_filter best -alpha_q 20 -pass 10 -q 75 ${noto-emoji-sheet-64} -o asar-contents/images/emoji-sheet-64.webp
 
     # Copy the Noto Color Emoji PNGs into the ASAR contents. See `src`
     # for the motivation, and the script for the technical details.
@@ -218,7 +237,7 @@ stdenv.mkDerivation rec {
     substituteInPlace asar-contents/preload.bundle.js \
       --replace-fail \
         'emoji://jumbo?emoji=' \
-        "file://$out/lib/${lib.escapeURL dir}/resources/app.asar/$emojiPrefix/"
+        "file://$out/lib/signal-desktop/resources/app.asar/$emojiPrefix/"
 
     # `asar(1)` copies files from the corresponding `.unpacked`
     # directory when extracting, and will put them back in the modified
@@ -227,7 +246,7 @@ stdenv.mkDerivation rec {
     asar pack \
       --unpack '*.node' \
       asar-contents \
-      "$out/lib/${dir}/resources/app.asar"
+      "$out/lib/signal-desktop/resources/app.asar"
 
     runHook postInstall
   '';
@@ -239,13 +258,13 @@ stdenv.mkDerivation rec {
     )
 
     # Fix the desktop link
-    substituteInPlace $out/share/applications/${pname}.desktop \
-      --replace-fail "/opt/${dir}/${pname}" $out/bin/${pname} \
+    substituteInPlace $out/share/applications/signal-desktop.desktop \
+      --replace-fail "/${bindir}/signal-desktop" ${meta.mainProgram} \
       --replace-fail "StartupWMClass=Signal" "StartupWMClass=signal"
 
     # Note: The following path contains bundled libraries:
-    # $out/lib/${dir}/resources/app.asar.unpacked/node_modules/
-    patchelf --add-needed ${libpulseaudio}/lib/libpulse.so "$out/lib/${dir}/resources/app.asar.unpacked/node_modules/@signalapp/ringrtc/build/linux/libringrtc-${ARCH}.node"
+    # $out/lib/signal-desktop/resources/app.asar.unpacked/node_modules/
+    patchelf --add-needed ${libpulseaudio}/lib/libpulse.so "$out/lib/signal-desktop/resources/app.asar.unpacked/node_modules/@signalapp/ringrtc/build/linux/libringrtc-${ARCH}.node"
   '';
 
   passthru = {
@@ -267,6 +286,9 @@ stdenv.mkDerivation rec {
 
       # Various npm packages
       lib.licenses.free
+
+      lib.licenses.asl20 # noto-emoji
+      lib.licenses.mit # emoji-data
     ];
     maintainers = with lib.maintainers; [
       mic92

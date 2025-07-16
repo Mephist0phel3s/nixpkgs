@@ -17,10 +17,10 @@
     #
     # Ensure you also check ../mattermostLatest/package.nix.
     regex = "^v(9\\.11\\.[0-9]+)$";
-    version = "9.11.8";
-    srcHash = "sha256-mTEAsY3Dw5n6sqLWyNfS4EGgZuUOol27UwqsZ2kEXZY=";
-    vendorHash = "sha256-alLPBfnA1o6bUUgPRqvYW/98UKR9wltmFTzKIGtVEm4=";
-    npmDepsHash = "sha256-ysz38ywGxJ5DXrrcDmcmezKbc5Y7aug9jOWUzHRAs/0=";
+    version = "9.11.16";
+    srcHash = "sha256-NWjAYegSufB/qRewc6yOcnLXxULGZ5DHK5+5OQ5CcBw=";
+    vendorHash = "sha256-H+IquwSfKfHxXnrSTMe2tjpQj4/T4ljAp9Uz5oMi5wU=";
+    npmDepsHash = "sha256-Kk0Bbx/Rs5xpwSpgpm9BSMMEMKmO6kgKgyv/oDIAZ7w=";
   },
 }:
 

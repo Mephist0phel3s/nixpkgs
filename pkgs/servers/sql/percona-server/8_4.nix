@@ -51,11 +51,11 @@ assert !(withJemalloc && withTcmalloc);
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "percona-server";
-  version = "8.4.3-3";
+  version = "8.4.5-5";
 
   src = fetchurl {
     url = "https://downloads.percona.com/downloads/Percona-Server-${lib.versions.majorMinor finalAttrs.version}/Percona-Server-${finalAttrs.version}/source/tarball/percona-server-${finalAttrs.version}.tar.gz";
-    hash = "sha256-37W0b8zYKErToJBU+aYtCmQjorcDtvuG0YbOwJzuZgo=";
+    hash = "sha256-i0f/Ndwqbn6qyqLSBK5FbBW12ZUzYMy2JQ2o1o2Y9q8=";
   };
 
   nativeBuildInputs = [
@@ -161,7 +161,7 @@ stdenv.mkDerivation (finalAttrs: {
     ''
       moveToOutput "lib/*.a" $static
       so=${stdenv.hostPlatform.extensions.sharedLibrary}
-      ln -s libmysqlclient$so $out/lib/libmysqlclient_r$so
+      ln -s libperconaserverclient$so $out/lib/libmysqlclient_r$so
 
       wrapProgram $out/bin/mysqld_safe --prefix PATH : ${
         lib.makeBinPath [

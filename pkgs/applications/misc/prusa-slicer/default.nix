@@ -1,42 +1,44 @@
-{ stdenv
-, lib
-, binutils
-, fetchFromGitHub
-, fetchpatch
-, cmake
-, pkg-config
-, wrapGAppsHook3
-, boost
-, cereal
-, cgal
-, curl
-, darwin
-, dbus
-, eigen
-, expat
-, glew
-, glib
-, glib-networking
-, gmp
-, gtk3
-, hicolor-icon-theme
-, ilmbase
-, libpng
-, mpfr
-, nanosvg
-, nlopt
-, opencascade-occt_7_6
-, openvdb
-, pcre
-, qhull
-, tbb_2021_11
-, wxGTK32
-, xorg
-, libbgcode
-, heatshrink
-, catch2
-, withSystemd ? lib.meta.availableOn stdenv.hostPlatform systemd, systemd
-, wxGTK-override ? null
+{
+  stdenv,
+  lib,
+  binutils,
+  fetchFromGitHub,
+  fetchpatch,
+  cmake,
+  pkg-config,
+  wrapGAppsHook3,
+  boost,
+  cereal,
+  cgal,
+  curl,
+  darwin,
+  dbus,
+  eigen,
+  expat,
+  glew,
+  glib,
+  glib-networking,
+  gmp,
+  gtk3,
+  hicolor-icon-theme,
+  ilmbase,
+  libpng,
+  mpfr,
+  nanosvg,
+  nlopt,
+  opencascade-occt_7_6,
+  openvdb,
+  pcre,
+  qhull,
+  tbb_2021_11,
+  wxGTK32,
+  xorg,
+  libbgcode,
+  heatshrink,
+  catch2,
+  withSystemd ? lib.meta.availableOn stdenv.hostPlatform systemd,
+  systemd,
+  wxGTK-override ? null,
 }:
 let
   opencascade-occt = opencascade-occt_7_6;
@@ -76,6 +78,11 @@ let
       url = "https://raw.githubusercontent.com/gentoo/gentoo/master/media-gfx/prusaslicer/files/prusaslicer-2.8.0-fixed-linking.patch";
       hash = "sha256-G1JNdVH+goBelag9aX0NctHFVqtoYFnqjwK/43FVgvM=";
     })
+    # https://github.com/prusa3d/PrusaSlicer/pull/14010
+    (fetchpatch {
+      url = "https://github.com/prusa3d/PrusaSlicer/commit/cdc3db58f9002778a0ca74517865527f50ade4c3.patch";
+      hash = "sha256-zgpGg1jtdnCBaWjR6oUcHo5sGuZx5oEzpux3dpRdMAM=";
+    })
   ];
 in
 stdenv.mkDerivation (finalAttrs: {
@@ -106,41 +113,44 @@ stdenv.mkDerivation (finalAttrs: {
     wxGTK-override'
   ];
 
-  buildInputs = [
-    binutils
-    boost
-    cereal
-    cgal
-    curl
-    dbus
-    eigen
-    expat
-    glew
-    glib
-    glib-networking
-    gmp
-    gtk3
-    hicolor-icon-theme
-    ilmbase
-    libpng
-    mpfr
-    nanosvg-fltk
-    nlopt
-    opencascade-occt
-    openvdb_tbb_2021_8
-    pcre
-    qhull
-    tbb_2021_11
-    wxGTK-override'
-    xorg.libX11
-    libbgcode
-    heatshrink
-    catch2
-  ] ++ lib.optionals withSystemd [
-    systemd
-  ] ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    darwin.apple_sdk_11_0.frameworks.CoreWLAN
-  ];
+  buildInputs =
+    [
+      binutils
+      boost
+      cereal
+      cgal
+      curl
+      dbus
+      eigen
+      expat
+      glew
+      glib
+      glib-networking
+      gmp
+      gtk3
+      hicolor-icon-theme
+      ilmbase
+      libpng
+      mpfr
+      nanosvg-fltk
+      nlopt
+      opencascade-occt
+      openvdb_tbb_2021_8
+      pcre
+      qhull
+      tbb_2021_11
+      wxGTK-override'
+      xorg.libX11
+      libbgcode
+      heatshrink
+      catch2
+    ]
+    ++ lib.optionals withSystemd [
+      systemd
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
+      darwin.apple_sdk_11_0.frameworks.CoreWLAN
+    ];
 
   strictDeps = true;
 
@@ -216,13 +226,19 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postCheck
   '';
 
-  meta = with lib; {
-    description = "G-code generator for 3D printer";
-    homepage = "https://github.com/prusa3d/PrusaSlicer";
-    license = licenses.agpl3Plus;
-    maintainers = with maintainers; [ tweber tmarkus ];
-    platforms = platforms.unix;
-  } // lib.optionalAttrs (stdenv.hostPlatform.isDarwin) {
-    mainProgram = "PrusaSlicer";
-  };
+  meta =
+    with lib;
+    {
+      description = "G-code generator for 3D printer";
+      homepage = "https://github.com/prusa3d/PrusaSlicer";
+      license = licenses.agpl3Plus;
+      maintainers = with maintainers; [
+        tweber
+        tmarkus
+      ];
+      platforms = platforms.unix;
+    }
+    // lib.optionalAttrs (stdenv.hostPlatform.isDarwin) {
+      mainProgram = "PrusaSlicer";
+    };
 })

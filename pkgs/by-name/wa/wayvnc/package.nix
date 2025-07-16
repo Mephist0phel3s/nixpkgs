@@ -1,30 +1,31 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, meson
-, ninja
-, pkg-config
-, scdoc
-, wayland-scanner
-, aml
-, jansson
-, libxkbcommon
-, mesa
-, neatvnc
-, pam
-, pixman
-, wayland
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  meson,
+  ninja,
+  pkg-config,
+  scdoc,
+  wayland-scanner,
+  aml,
+  jansson,
+  libxkbcommon,
+  mesa,
+  neatvnc,
+  pam,
+  pixman,
+  wayland,
 }:
 
 stdenv.mkDerivation rec {
   pname = "wayvnc";
-  version = "0.8.0";
+  version = "0.9.1";
 
   src = fetchFromGitHub {
     owner = "any1";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-IGEM212CU91+pT8xq3BzrPrIDUZxZveb2jhatMGJAsw=";
+    hash = "sha256-LINzkC18gitj1a8Giqlt/6LyydOdV+8YXRJmuxT/Nq8=";
   };
 
   strictDeps = true;

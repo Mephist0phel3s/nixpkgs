@@ -92,6 +92,10 @@
   # For Vulkan support (--enable-features=Vulkan)
   addDriverRunpath,
 
+  # Edge AAD sync
+  cacert,
+  libsecret,
+
   # Edge Specific
   libuuid,
 }:
@@ -107,6 +111,7 @@ let
       at-spi2-core
       atk
       bzip2
+      cacert
       cairo
       coreutils
       cups
@@ -156,6 +161,7 @@ let
       vulkan-loader
       wayland
       wget
+      libsecret
       libuuid
     ]
     ++ lib.optional pulseSupport libpulseaudio
@@ -168,11 +174,11 @@ in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "microsoft-edge";
-  version = "132.0.2957.127";
+  version = "137.0.3296.93";
 
   src = fetchurl {
     url = "https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_${finalAttrs.version}-1_amd64.deb";
-    hash = "sha256-uoC8oxkrMWgmkUbgn7OP21lpEadKZmb4Heb32zEvdjE=";
+    hash = "sha256-SC8h6UQ/ee5ZlQWAZsmC1Co5Ky4kaXuoMpvVZtTIMHQ=";
   };
 
   # With strictDeps on, some shebangs were not being patched correctly
@@ -249,6 +255,7 @@ stdenv.mkDerivation (finalAttrs: {
       --prefix PATH            : "$binpath" \
       --suffix PATH            : "${lib.makeBinPath [ xdg-utils ]}" \
       --prefix XDG_DATA_DIRS   : "$XDG_ICON_DIRS:$GSETTINGS_SCHEMAS_PATH:${addDriverRunpath.driverLink}/share" \
+      --set SSL_CERT_FILE "${cacert}/etc/ssl/certs/ca-bundle.crt" \
       --set CHROME_WRAPPER  "microsoft-edge-$dist" \
       --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}" \
       --add-flags "--simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT'" \
@@ -277,9 +284,10 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.unfree;
     mainProgram = "microsoft-edge";
     maintainers = with lib.maintainers; [
-      zanculmarktum
-      kuwii
-      rhysmdnz
+      cholli
+      ulrikstrid
+      maeve-oake
+      leleuvilela
     ];
     platforms = [ "x86_64-linux" ];
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
