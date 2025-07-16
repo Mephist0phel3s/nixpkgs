@@ -170,7 +170,7 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.mesonEnable "libcamera" true)
     (lib.mesonEnable "libffado" ffadoSupport)
     (lib.mesonEnable "roc" rocSupport)
-    (lib.mesonEnable "libpulse" true)
+    (lib.mesonEnable "libpulse" false)
     (lib.mesonEnable "avahi" zeroconfSupport)
     (lib.mesonEnable "gstreamer" true)
     (lib.mesonEnable "gstreamer-device-provider" true)
